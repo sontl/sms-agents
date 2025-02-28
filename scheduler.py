@@ -1,10 +1,11 @@
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from browser_use import Agent
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from dotenv import load_dotenv
 import asyncio
 import logging
+import os
 
 # Set up logging
 logging.basicConfig(
@@ -25,8 +26,13 @@ async def run_agent():
     try:
         # Initialize the agent with your task
         agent = Agent(
-            task="Your task description here",  # Customize this with your specific task
-            llm=ChatOpenAI(model="gpt-4"),  # You can change the model as needed
+            task="Tell me what is the weather in Tokyo",  # Customize this with your specific task
+            llm=ChatGoogleGenerativeAI(
+                model="gemini-2.0-flash-thinking-exp-01-21",
+                google_api_key=os.getenv("GOOGLE_API_KEY"),
+                temperature=0.7,
+                convert_system_message_to_human=True
+            ),
         )
         
         # Run the agent and get the result
