@@ -2,3 +2,4 @@
 venv/
 agent.log
 .venv/
+logs/
