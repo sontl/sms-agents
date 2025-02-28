@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import asyncio
 import logging
 import os
+import random
 
 # Set up logging
 logging.basicConfig(
@@ -19,6 +20,83 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+def get_random_task():
+    """Return a random task configuration with initial actions."""
+    tasks = [
+        {
+            "task": ("Navigate to Facebook, go to your profile page, and create a new post. Write an inspiring quote about "
+                    "life and music, something that reflects on how melody brings joy to our existence. Make sure to add "
+                    "relevant hashtags like #music #suno #singmesong. After writing, click the Post button."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://facebook.com'}}
+            ]
+        },
+        {
+            "task": ("Go to X/Twitter and create a new tweet. Share a thoughtful reflection about how songs can heal the soul "
+                    "and bring people together. Include hashtags like #MusicHeals #SingMeSong. After composing your tweet, "
+                    "post it."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://x.com'}}
+            ]
+        },
+        {
+            "task": ("Visit Facebook and create a new post about the transformative power of music. Share how melodies can "
+                    "change our mood and uplift our spirits. Include a famous quote about music from a renowned musician or "
+                    "composer. Add hashtags like #MusicIsLife #Melodies #SingMeSong."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://facebook.com'}}
+            ]
+        },
+        {
+            "task": ("Navigate to X/Twitter and compose a tweet about the connection between nature's rhythms and music. "
+                    "Reflect on how the sounds of nature inspire musical creativity. Use hashtags like #NatureMusic "
+                    "#MusicalInspiration #SingMeSong."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://x.com'}}
+            ]
+        },
+        {
+            "task": ("Navigate to Facebook and create a new post about the transformative power of music. Share how melodies can "
+                    "change our mood and uplift our spirits. Include a famous quote about music from a renowned musician or "
+                    "composer. Add hashtags like #MusicIsLife #Melodies #SingMeSong."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://facebook.com'}}
+            ]
+        }, 
+        {
+            "task": ("Navigate to X/Twitter and compose a tweet about the connection between nature's rhythms and music. "
+                    "Reflect on how the sounds of nature inspire musical creativity. Use hashtags like #NatureMusic "
+                    "#MusicalInspiration #SingMeSong."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://x.com'}}
+            ]
+        },
+        {
+            "task": ("Navigate to Facebook and like a post  ."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://facebook.com'}}
+            ]
+        },
+        {
+            "task": ("Navigate to X/Twitter and like a post."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://x.com'}}
+            ]
+        },
+        {
+            "task": ("Navigate to Facebook and comment on a post."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://facebook.com'}}
+            ]
+        },
+        {
+            "task": ("Navigate to X/Twitter and comment on a post."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://x.com'}}
+            ]
+        }
+    ]
+    return random.choice(tasks)
 
 # Basic configuration
 config = BrowserConfig(
@@ -33,23 +111,14 @@ browser = Browser(config=config)
 load_dotenv()
 
 async def run_agent():
-    """Run the browser-use agent with the specified task."""
+    """Run the browser-use agent with a randomly selected task."""
     try:
-        initial_actions = [
-            {'open_tab': {'url': 'https://x.com/home'}},
-            {'scroll_down': {'amount': 1000}},
-        ]
-        # Initialize the agent with your task
+        # Get a random task configuration
+        task_config = get_random_task()
+        
+        # Initialize the agent with the random task
         agent = Agent(
-            task=(
-                "Navigate to the search page at https://x.com/search?q=suno%20music&src=typed_query&f=live "
-                "and wait for it to fully load. Once the page is loaded,"
-                "click on a post that was not created by sontl. Like the relevant post by clicking the heart-shaped "
-                "\"Like\" button, then click the \"Comment\" button (message icon) to open the comment modal. "
-                "Write a short, relevant comment based on the post and comments, mimicking a real human response, "
-                "and ensure to answer in the language of the post. Finally, click the \"Reply\" button to submit "
-                "your comment and complete the task."
-            ),  # Customize this with your specific task
+            task=task_config["task"],
             llm=ChatGoogleGenerativeAI(
                 model="gemini-2.0-pro-exp-02-05",
                 google_api_key=os.getenv("GOOGLE_API_KEY"),
@@ -59,14 +128,15 @@ async def run_agent():
             browser=browser,
             use_vision=True,
             save_conversation_path="logs/conversation",
-            initial_actions=initial_actions
+            initial_actions=task_config["initial_actions"]
         )
         
         # Run the agent and get the result
         result = await agent.run()
         
         # Log the result
-        logger.info(f"Agent execution completed. Result: {result}")
+        logger.info(f"Agent execution completed with task: {task_config['task'][:100]}...")
+        logger.info(f"Result: {result}")
         
     except Exception as e:
         logger.error(f"Error running agent: {e}", exc_info=True)
@@ -81,19 +151,19 @@ def main():
         # Create scheduler
         scheduler = BlockingScheduler()
         
-        # Add job to run every 15 minutes
+        # Add job to run every 10 minutes
         scheduler.add_job(
             run_agent_wrapper,
-            CronTrigger(minute='*/13'),  # Run every 15 minutes
+            CronTrigger(minute='*/10'),  # Run every 10 minutes
             name='browser_agent_job',
             max_instances=1,
             coalesce=True,
             misfire_grace_time=None
         )
         
-        logger.info("Scheduler started. Agent will run every 13 minutes.")
+        logger.info("Scheduler started. Agent will run every 10 minutes.")
         scheduler.start()
-        run_agent_wrapper()
+        # run_agent_wrapper()
         
     except (KeyboardInterrupt, SystemExit):
         logger.info("Scheduler stopped.")
