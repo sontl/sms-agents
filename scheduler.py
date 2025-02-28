@@ -28,7 +28,7 @@ async def run_agent():
         agent = Agent(
             task="Tell me what is the weather in Tokyo",  # Customize this with your specific task
             llm=ChatGoogleGenerativeAI(
-                model="gemini-2.0-flash-thinking-exp-01-21",
+                model="gemini-2.0-pro-exp-02-05",
                 google_api_key=os.getenv("GOOGLE_API_KEY"),
                 temperature=0.7,
                 convert_system_message_to_human=True
@@ -52,20 +52,21 @@ def main():
     """Main function to set up and start the scheduler."""
     try:
         # Create scheduler
-        scheduler = BlockingScheduler()
+        # scheduler = BlockingScheduler()
         
         # Add job to run every 15 minutes
-        scheduler.add_job(
-            run_agent_wrapper,
-            CronTrigger(minute='*/15'),  # Run every 15 minutes
-            name='browser_agent_job',
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=None
-        )
+        # scheduler.add_job(
+        #     run_agent_wrapper,
+        #     CronTrigger(minute='*/3'),  # Run every 15 minutes
+        #     name='browser_agent_job',
+        #     max_instances=1,
+        #     coalesce=True,
+        #     misfire_grace_time=None
+        # )
         
-        logger.info("Scheduler started. Agent will run every 15 minutes.")
-        scheduler.start()
+        # logger.info("Scheduler started. Agent will run every 15 minutes.")
+        # scheduler.start()
+        run_agent_wrapper()
         
     except (KeyboardInterrupt, SystemExit):
         logger.info("Scheduler stopped.")
