@@ -98,23 +98,35 @@ def get_random_task():
     ]
     return random.choice(tasks)
 
-# Basic configuration
-config = BrowserConfig(
-    headless=True,
-    disable_security=True,
-    chrome_instance_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-)
-
-browser = Browser(config=config)
-
-# Load environment variables
-load_dotenv()
+async def cleanup_browser(agent):
+    """Safely cleanup browser resources."""
+    try:
+        if agent and hasattr(agent, 'browser') and agent.browser:
+            if hasattr(agent.browser, 'context') and agent.browser.context:
+                await agent.browser.context.close()
+            if hasattr(agent.browser, 'playwright') and agent.browser.playwright:
+                await agent.browser.playwright.stop()
+    except Exception as e:
+        logger.error(f"Error during browser cleanup: {e}")
 
 async def run_agent():
     """Run the browser-use agent with a randomly selected task."""
+    agent = None
     try:
+        # Basic configuration
+        config = BrowserConfig(
+            headless=True,
+            disable_security=True,
+            chrome_instance_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        )
+
+        browser = Browser(config=config)
+        
         # Get a random task configuration
         task_config = get_random_task()
+        
+        # Create a timeout for the entire operation
+        timeout = 8 * 60  # 8 minutes timeout
         
         # Initialize the agent with the random task
         agent = Agent(
@@ -131,19 +143,37 @@ async def run_agent():
             initial_actions=task_config["initial_actions"]
         )
         
-        # Run the agent and get the result
-        result = await agent.run()
-        
-        # Log the result
-        logger.info(f"Agent execution completed with task: {task_config['task'][:100]}...")
-        logger.info(f"Result: {result}")
+        # Run the agent with timeout
+        try:
+            result = await asyncio.wait_for(agent.run(), timeout=timeout)
+            logger.info(f"Agent execution completed with task: {task_config['task'][:100]}...")
+            logger.info(f"Result: {result}")
+        except asyncio.TimeoutError:
+            logger.error(f"Task timed out after {timeout} seconds")
+        finally:
+            # Always cleanup browser resources
+            await cleanup_browser(agent)
         
     except Exception as e:
         logger.error(f"Error running agent: {e}", exc_info=True)
+        # Ensure browser cleanup on error
+        if agent:
+            await cleanup_browser(agent)
 
 def run_agent_wrapper():
     """Wrapper function to run the async agent in the scheduler."""
-    asyncio.run(run_agent())
+    try:
+        # Create new event loop for each run
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        # Run the agent
+        loop.run_until_complete(run_agent())
+        
+        # Clean up
+        loop.close()
+    except Exception as e:
+        logger.error(f"Error in agent wrapper: {e}", exc_info=True)
 
 def main():
     """Main function to set up and start the scheduler."""
@@ -151,19 +181,19 @@ def main():
         # Create scheduler
         scheduler = BlockingScheduler()
         
-        # Add job to run every 10 minutes
-        scheduler.add_job(
-            run_agent_wrapper,
-            CronTrigger(minute='*/10'),  # Run every 10 minutes
-            name='browser_agent_job',
-            max_instances=1,
-            coalesce=True,
-            misfire_grace_time=None
-        )
+        # Add job to run every 15 minutes
+        # scheduler.add_job(
+        #     run_agent_wrapper,
+        #     CronTrigger(minute='*/15'),  # Run every 15 minutes
+        #     name='browser_agent_job',
+        #     max_instances=1,
+        #     coalesce=True,
+        #     misfire_grace_time=300  # 5 minutes grace time
+        # )
         
-        logger.info("Scheduler started. Agent will run every 10 minutes.")
-        scheduler.start()
-        # run_agent_wrapper()
+        # logger.info("Scheduler started. Agent will run every 15 minutes.")
+        # scheduler.start()
+        run_agent_wrapper()
         
     except (KeyboardInterrupt, SystemExit):
         logger.info("Scheduler stopped.")
