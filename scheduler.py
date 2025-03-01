@@ -1,5 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
-from browser_use import Agent, Browser, BrowserConfig
+from browser_use import Agent, Browser, BrowserConfig, BrowserContextConfig
 from playwright.async_api import BrowserContext
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -114,11 +114,24 @@ async def run_agent():
     agent = None
     try:
         # Basic configuration
-        config = BrowserConfig(
-            headless=True,
-            disable_security=True,
-            chrome_instance_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        context_config = BrowserContextConfig(
+            cookies_file="/Users/sontl/Downloads/x.com.cookies.json",
+            wait_for_network_idle_page_load_time=3.0,
+            browser_window_size={'width': 1280, 'height': 1100},
+            locale='en-US',
+            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
+            highlight_elements=True,
+            viewport_expansion=500,
+            #chrome_instance_path="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
         )
+
+        # Initialize browser with context config
+        config = BrowserConfig(
+                    headless=False,
+                    disable_security=True,
+                    # Comment the next 3 lines to make it work
+                    new_context_config=context_config
+                )
 
         browser = Browser(config=config)
         
