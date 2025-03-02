@@ -19,7 +19,8 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-
+x_com_cookies = "/Users/sontl/Downloads/x.com.cookies.json"
+facebook_cookies = "/Users/sontl/Downloads/www.facebook.com.cookies.json"
 def get_random_task():
     """Return a random task configuration with initial actions."""
     tasks = [
@@ -29,7 +30,8 @@ def get_random_task():
                     "relevant hashtags like #music #suno #singmesong. After writing, click the Post button."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://facebook.com'}}
-            ]
+            ],
+            "cookies_file": facebook_cookies
         },
         {
             "task": ("Go to X/Twitter and create a new tweet. Share a thoughtful reflection about how songs can heal the soul "
@@ -37,7 +39,8 @@ def get_random_task():
                     "post it."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://x.com'}}
-            ]
+            ],
+            "cookies_file": x_com_cookies
         },
         {
             "task": ("Visit Facebook and create a new post about the transformative power of music. Share how melodies can "
@@ -45,7 +48,8 @@ def get_random_task():
                     "composer. Add hashtags like #MusicIsLife #Melodies #SingMeSong."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://facebook.com'}}
-            ]
+            ],
+            "cookies_file": facebook_cookies
         },
         {
             "task": ("Navigate to X/Twitter and compose a tweet about the connection between nature's rhythms and music. "
@@ -53,7 +57,8 @@ def get_random_task():
                     "#MusicalInspiration #SingMeSong."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://x.com'}}
-            ]
+            ],
+            "cookies_file": x_com_cookies
         },
         {
             "task": ("Navigate to Facebook and create a new post about the transformative power of music. Share how melodies can "
@@ -61,7 +66,8 @@ def get_random_task():
                     "composer. Add hashtags like #MusicIsLife #Melodies #SingMeSong."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://facebook.com'}}
-            ]
+            ],
+            "cookies_file": facebook_cookies
         }, 
         {
             "task": ("Navigate to X/Twitter and compose a tweet about the connection between nature's rhythms and music. "
@@ -69,31 +75,36 @@ def get_random_task():
                     "#MusicalInspiration #SingMeSong."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://x.com'}}
-            ]
+            ],
+            "cookies_file": x_com_cookies
         },
         {
             "task": ("Navigate to Facebook and like a post  ."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://facebook.com'}}
-            ]
+            ],
+            "cookies_file": facebook_cookies
         },
         {
             "task": ("Navigate to X/Twitter and like a post."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://x.com'}}
-            ]
+            ],
+            "cookies_file": x_com_cookies
         },
         {
-            "task": ("Navigate to Facebook and comment on a post."),
+            "task": ("Navigate to Facebook and comment on a post. Comment something positive and inspiring and something that is related to the post. Short and human like."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://facebook.com'}}
-            ]
+            ],
+            "cookies_file": facebook_cookies
         },
         {
-            "task": ("Navigate to X/Twitter and comment on a post."),
+            "task": ("Navigate to X/Twitter and comment on a post. Comment something positive and inspiring and something that is related to the post. Short and human like."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://x.com'}}
-            ]
+            ],
+            "cookies_file": x_com_cookies
         }
     ]
     return random.choice(tasks)
@@ -112,10 +123,17 @@ async def cleanup_browser(agent):
 async def run_agent():
     """Run the browser-use agent with a randomly selected task."""
     agent = None
+
     try:
+        # Get a random task configuration
+        task_config = get_random_task()
+        
+        # Create a timeout for the entire operation
+        timeout = 8 * 60  # 8 minutes timeout
+        
         # Basic configuration
         context_config = BrowserContextConfig(
-            cookies_file="/Users/sontl/Downloads/x.com.cookies.json",
+            cookies_file=task_config["cookies_file"],
             wait_for_network_idle_page_load_time=3.0,
             browser_window_size={'width': 1280, 'height': 1100},
             locale='en-US',
@@ -134,12 +152,6 @@ async def run_agent():
                 )
 
         browser = Browser(config=config)
-        
-        # Get a random task configuration
-        task_config = get_random_task()
-        
-        # Create a timeout for the entire operation
-        timeout = 8 * 60  # 8 minutes timeout
         
         # Initialize the agent with the random task
         agent = Agent(
@@ -195,18 +207,18 @@ def main():
         scheduler = BlockingScheduler()
         
         # Add job to run every 15 minutes
-        # scheduler.add_job(
-        #     run_agent_wrapper,
-        #     CronTrigger(minute='*/15'),  # Run every 15 minutes
-        #     name='browser_agent_job',
-        #     max_instances=1,
-        #     coalesce=True,
-        #     misfire_grace_time=300  # 5 minutes grace time
-        # )
+        scheduler.add_job(
+            run_agent_wrapper,
+            CronTrigger(minute='*/5'),  # Run every 15 minutes
+            name='browser_agent_job',
+            max_instances=1,
+            coalesce=True,
+            misfire_grace_time=300  # 5 minutes grace time
+        )
         
-        # logger.info("Scheduler started. Agent will run every 15 minutes.")
-        # scheduler.start()
-        run_agent_wrapper()
+        logger.info("Scheduler started. Agent will run every 15 minutes.")
+        scheduler.start()
+        #run_agent_wrapper()
         
     except (KeyboardInterrupt, SystemExit):
         logger.info("Scheduler stopped.")
