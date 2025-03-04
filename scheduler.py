@@ -23,6 +23,7 @@ x_com_cookies = os.getenv("X_COM_COOKIES")
 facebook_cookies = os.getenv("FACEBOOK_COOKIES")
 youtube_cookies = os.getenv("YOUTUBE_COOKIES")
 reddit_cookies = os.getenv("REDDIT_COOKIES")
+stack_overflow_cookies = os.getenv("STACK_OVERFLOW_COOKIES")
 def get_random_task():
     """Return a random task configuration with initial actions."""
     tasks = [
@@ -106,6 +107,13 @@ def get_random_task():
                 {'open_tab': {'url': 'https://reddit.com'}}
             ],
             "cookies_file": reddit_cookies
+        }, 
+        {
+            "task": ("Navigate to Stack Overflow and find a post in the home page, answer it with a a correct answer."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://stackoverflow.com'}}
+            ],
+            "cookies_file": stack_overflow_cookies
         }
     ]
     return random.choice(tasks)
