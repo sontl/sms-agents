@@ -19,92 +19,93 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
-x_com_cookies = "/Users/sontl/Downloads/x.com.cookies.json"
-facebook_cookies = "/Users/sontl/Downloads/www.facebook.com.cookies.json"
+x_com_cookies = os.getenv("X_COM_COOKIES")
+facebook_cookies = os.getenv("FACEBOOK_COOKIES")
+youtube_cookies = os.getenv("YOUTUBE_COOKIES")
+reddit_cookies = os.getenv("REDDIT_COOKIES")
 def get_random_task():
     """Return a random task configuration with initial actions."""
     tasks = [
         {
-            "task": ("Navigate to Facebook, go to your profile page, and create a new post. Write an inspiring quote about "
+            "task": ("Navigate to Facebook, search for a post about music, and like it. Then comment on the post with an inspiring quote about "
                     "life and music, something that reflects on how melody brings joy to our existence. Make sure to add "
-                    "relevant hashtags like #music #suno #singmesong. After writing, click the Post button."),
+                    "relevant hashtags like #music #singmesong. After writing, click the Post button."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://facebook.com'}}
             ],
             "cookies_file": facebook_cookies
         },
         {
-            "task": ("Go to X/Twitter and create a new tweet. Share a thoughtful reflection about how songs can heal the soul "
-                    "and bring people together. Include hashtags like #MusicHeals #SingMeSong. After composing your tweet, "
-                    "post it."),
+            "task": ("Go to X/Twitter and search for a post about music, and like it. Then comment on the post with an inspiring quote about "
+                    "life and music, something that reflects on how melody brings joy to our existence. Make sure to add "
+                    "relevant hashtags like #music #singmesong. After writing, click the Post button."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://x.com'}}
             ],
             "cookies_file": x_com_cookies
         },
         {
-            "task": ("Visit Facebook and create a new post about the transformative power of music. Share how melodies can "
-                    "change our mood and uplift our spirits. Include a famous quote about music from a renowned musician or "
-                    "composer. Add hashtags like #MusicIsLife #Melodies #SingMeSong."),
+            "task": ("Visit Youtube and search for a post about music, and like it. Then comment on the post with an inspiring quote about "
+                    "life and music, something that reflects on how melody brings joy to our existence. Make sure to add "
+                    "relevant hashtags like #music #singmesong. After writing, click the Post button."),
             "initial_actions": [
-                {'open_tab': {'url': 'https://facebook.com'}}
+                {'open_tab': {'url': 'https://youtube.com'}}
             ],
-            "cookies_file": facebook_cookies
+            "cookies_file": youtube_cookies
         },
         {
-            "task": ("Navigate to X/Twitter and compose a tweet about the connection between nature's rhythms and music. "
-                    "Reflect on how the sounds of nature inspire musical creativity. Use hashtags like #NatureMusic "
-                    "#MusicalInspiration #SingMeSong."),
+            "task": ("Navigate to X/Twitter and find a post in the home page, like it and comment on it with a short and human like comment "
+                    "about the post. Comment something positive and inspiring and something that is related to the post. Short and human like."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://x.com'}}
             ],
             "cookies_file": x_com_cookies
         },
         {
-            "task": ("Navigate to Facebook and create a new post about the transformative power of music. Share how melodies can "
-                    "change our mood and uplift our spirits. Include a famous quote about music from a renowned musician or "
-                    "composer. Add hashtags like #MusicIsLife #Melodies #SingMeSong."),
+            "task": ("Navigate to Facebook and find a post in the home page, like it and comment on it with a short and human like comment "
+                    "about the post. Comment something positive and inspiring and something that is related to the post. Short and human like."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://facebook.com'}}
             ],
             "cookies_file": facebook_cookies
         }, 
         {
-            "task": ("Navigate to X/Twitter and compose a tweet about the connection between nature's rhythms and music. "
-                    "Reflect on how the sounds of nature inspire musical creativity. Use hashtags like #NatureMusic "
-                    "#MusicalInspiration #SingMeSong."),
+            "task": ("Navigate to X/Twitter and find a post in the home page, like it and comment on it with a short and human like comment "
+                    "about the post. Comment something positive and inspiring and something that is related to the post. Short and human like."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://x.com'}}
             ],
             "cookies_file": x_com_cookies
         },
         {
-            "task": ("Navigate to Facebook and like a post  ."),
+            "task": ("Navigate to Youtube and find a post about AI Music, Suno, Udio, or any other AI Music service, like it and comment on it with a short and human like comment "
+                    "about the post. Comment something positive and inspiring and something that is related to the post. Short and human like. Mention singmesong. com in the comment, saying that user can make music videos with it, effortlessly and quickly."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://youtube.com'}}
+            ],
+            "cookies_file": youtube_cookies
+        },
+        {
+            "task": ("Navigate to X/Twitter and follow a random user. If we already follow them, don't unfollow them. Find a new user to follow."),
+            "initial_actions": [
+                {'open_tab': {'url': 'https://x.com'}}
+            ],
+            "cookies_file": x_com_cookies
+        },
+        {
+            "task": ("Navigate to Facebook and send friend request to a random user. If we already sent a request to them, don't send another one."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://facebook.com'}}
             ],
             "cookies_file": facebook_cookies
         },
         {
-            "task": ("Navigate to X/Twitter and like a post."),
+            "task": ("Navigate to Reddit and find a post in the home page, like it and comment on it with a short and human like comment "
+                    "about the post. Comment something positive and inspiring and something that is related to the post. Short and human like."),
             "initial_actions": [
-                {'open_tab': {'url': 'https://x.com'}}
+                {'open_tab': {'url': 'https://reddit.com'}}
             ],
-            "cookies_file": x_com_cookies
-        },
-        {
-            "task": ("Navigate to Facebook and comment on a post. Comment something positive and inspiring and something that is related to the post. Short and human like."),
-            "initial_actions": [
-                {'open_tab': {'url': 'https://facebook.com'}}
-            ],
-            "cookies_file": facebook_cookies
-        },
-        {
-            "task": ("Navigate to X/Twitter and comment on a post. Comment something positive and inspiring and something that is related to the post. Short and human like."),
-            "initial_actions": [
-                {'open_tab': {'url': 'https://x.com'}}
-            ],
-            "cookies_file": x_com_cookies
+            "cookies_file": reddit_cookies
         }
     ]
     return random.choice(tasks)
@@ -145,7 +146,7 @@ async def run_agent():
 
         # Initialize browser with context config
         config = BrowserConfig(
-                    headless=False,
+                    headless=True,
                     disable_security=True,
                     # Comment the next 3 lines to make it work
                     new_context_config=context_config
