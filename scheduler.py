@@ -29,7 +29,7 @@ def get_random_task():
     tasks = [
         {
             "task": ("Navigate to Facebook, search for a post about music, and like it. Then comment on the post with an inspiring quote about "
-                    "life and music, something that reflects on how melody brings joy to our existence. Make sure to add "
+                    "life and music, something that relevant to the post. Make sure to add "
                     "relevant hashtags like #music #singmesong. After writing, click the Post button."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://facebook.com'}}
@@ -38,7 +38,7 @@ def get_random_task():
         },
         {
             "task": ("Go to X/Twitter and search for a post about music, and like it. Then comment on the post with an inspiring quote about "
-                    "life and music, something that reflects on how melody brings joy to our existence. Make sure to add "
+                    "life and music, something that relevant to the post. Make sure to add "
                     "relevant hashtags like #music #singmesong. After writing, click the Post button."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://x.com'}}
@@ -47,7 +47,7 @@ def get_random_task():
         },
         {
             "task": ("Visit Youtube and search for a post about music, and like it. Then comment on the post with an inspiring quote about "
-                    "life and music, something that reflects on how melody brings joy to our existence. Make sure to add "
+                    "life and music, something that relevant to the post. Make sure to add "
                     "relevant hashtags like #music #singmesong. After writing, click the Post button."),
             "initial_actions": [
                 {'open_tab': {'url': 'https://youtube.com'}}
