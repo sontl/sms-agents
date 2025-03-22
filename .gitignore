@@ -3,3 +3,4 @@ venv/
 agent.log
 .venv/
 logs/
+.pyp
